@@ -194,9 +194,9 @@ go build
 
 > A documented timeline of working sessions
 
-|         Start         |           End           | Description                                                      |
-|:---------------------:|:-----------------------:|:-----------------------------------------------------------------|
-| Sat, Aug 1st 2026 12p | Sat, Aug 1st 2026 1:39p | First Session. Working on:<br/><ul><li>initial project structure</li><li>architectural documents</li><li>and initial issues</li></ul> |
+|         Start         |           End           | Issue | Description                                                                                                                               |
+|:---------------------:|:-----------------------:|:-----:|:------------------------------------------------------------------------------------------------------------------------------------------|
+| Sat, Aug 1st 2026 12p | Sat, Aug 1st 2026 2:15p |   #1  | First Session.<br/>Working on:<br/><ul><li>initial project structure</li><li>architectural documents</li><li>and initial issues</li></ul> |
 
 ## LICENSE
 
