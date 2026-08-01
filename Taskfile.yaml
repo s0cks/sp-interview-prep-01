@@ -10,6 +10,10 @@ tasks:
     internal: false
     cmds:
       - go test "./internal/{{.GO_TARGET}}"
+  go:run-cmd:
+    internal: false
+    cmds:
+      - go run "./cmd/{{.GO_TARGET}}"
   build:service:
     cmds:
       - task: go:build-cmd
@@ -20,6 +24,11 @@ tasks:
       - task: go:test
         vars:
           GO_TARGET: sensor
+  run:service:
+    cmds:
+      - task: go:run-cmd
+        vars:
+          GO_TARGET: sensor-service
   build:
     deps:
       - build:service
