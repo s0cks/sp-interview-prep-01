@@ -71,3 +71,39 @@ func TestSensorBuffer_TestWrappingBehavior(t *testing.T) {
 		t.Errorf("expected an empty buffer, %d items remain in buffer", sb.length)
 	}
 }
+
+func TestSensorBuffer_TestCalcMetrics1(t *testing.T) {
+	sb := NewSensorBuffer(5)
+	v1 := 1289.0
+	v2 := 122178926.0
+	v3 := 12178926.0
+
+	// fill buffer
+	sb.Write(v1)
+	sb.Write(v2)
+	sb.Write(v3)
+
+	expected_len := 3
+	if sb.length != expected_len {
+		t.Errorf("expected SensorBuffer length to be %d, but was %d", expected_len, sb.length)
+	}
+
+	metrics, err := sb.CalcMetrics()
+	if err != nil {
+		t.Fatalf("failed to calculate SensorBuffer metrics: %v", err)
+	}
+
+	expected_sum := v1 + v2 + v3
+	if metrics.sum != expected_sum {
+		t.Errorf("failed to calculate sum: expected %f, received: %f", expected_sum, metrics.sum)
+	}
+
+	expected_avg := expected_sum / float64(expected_len)
+	if metrics.avg != expected_avg {
+		t.Errorf("failed to calculate avg: expected %f, received: %f", expected_avg, metrics.sum)
+	}
+
+	if sb.length != expected_len {
+		t.Errorf("expected SensorBuffer length to be %d, but was %d", expected_len, sb.length)
+	}
+}
