@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/s0cks/sp-interview-prep-01/compare/sensor-service-v1.1.1...sensor-service-v1.1.2) (2026-08-01)
+
+
+### Bug Fixes
+
+* trying to get release-please working still ([7a851c7](https://github.com/s0cks/sp-interview-prep-01/commit/7a851c724d0a8847850717ae6908039c36042f44))
+
 ## [1.1.1](https://github.com/s0cks/sp-interview-prep-01/compare/sensor-service-v1.1.0...sensor-service-v1.1.1) (2026-08-01)
 
 
