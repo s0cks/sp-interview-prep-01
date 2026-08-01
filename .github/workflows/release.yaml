@@ -16,8 +16,8 @@ jobs:
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
       go_tag: ${{ steps.release.outputs['._tag_name'] }}
-      docker_tag: ${{ steps.release.outputs['docker_tag_name'] }}
-      docker_version: ${{ steps.release.outputs['docker_version'] }}
+      docker_tag: ${{ steps.release.outputs['._tag_name'] }}
+      docker_version: ${{ steps.release.outputs['._version'] }}
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
