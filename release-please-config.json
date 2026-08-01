@@ -1,0 +1,15 @@
+{
+  "packages": {
+    ".": {
+      "package-name": "sensor-service",
+      "release-type": "go",
+      "bump-minor-pre-major": true,
+      "bump-patch-pre-major": true
+    },
+    "docker": {
+      "package-name": "sensor-service",
+      "release-type": "simple",
+      "version-file": "VERSION"
+    }
+  }
+}
