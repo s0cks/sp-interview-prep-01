@@ -1,0 +1,19 @@
+version: '3'
+vars:
+  BIN_DIR: "{{.ROOT_DIR}}/bin"
+tasks:
+  go:build-cmd:
+    internal: false
+    cmds:
+      - go build -o "{{.BIN_DIR}}/{{.GO_TARGET}}" ./cmd/{{.GO_TARGET}}
+  build:service:
+    cmds:
+      - task: go:build-cmd
+        vars:
+          GO_TARGET: sensor-service
+  build:
+    deps:
+      - build:service
+  default:
+    cmds:
+      - task: build

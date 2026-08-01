@@ -1,2 +1,3 @@
 .rumdl_cache/
-sensor-service
+bin/*
+!bin/.git*
