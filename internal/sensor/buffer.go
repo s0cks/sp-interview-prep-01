@@ -14,6 +14,11 @@ type SensorBuffer struct {
 	capacity int
 }
 
+type SensorBufferMetrics struct {
+	sum float64
+	avg float64
+}
+
 func NewSensorBuffer(capacity int) *SensorBuffer {
 	return &SensorBuffer{
 		data:     make([]float64, capacity),
@@ -49,4 +54,23 @@ func (sb *SensorBuffer) Read() (float64, error) {
 	sb.head = (sb.head + 1) % sb.capacity
 	sb.length--
 	return next, nil
+}
+
+func (sb *SensorBuffer) CalcMetrics() (*SensorBufferMetrics, error) {
+	sb.lock.RLock()
+	defer sb.lock.RUnlock()
+
+	if sb.length == 0 {
+		return nil, errors.New("buffer is empty")
+	}
+
+	sum := float64(0.0)
+	for _, val := range sb.data {
+		sum += val
+	}
+
+	return &SensorBufferMetrics{
+		sum: sum,
+		avg: sum / float64(sb.length),
+	}, nil
 }
