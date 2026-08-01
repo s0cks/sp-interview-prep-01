@@ -1,3 +1,3 @@
-module github.com/s0cks/sp-interview-prep-01
+module sensor-service
 
 go 1.26.4

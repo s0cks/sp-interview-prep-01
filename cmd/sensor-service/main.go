@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sensor-service/internal/sensor"
+)
 
 func main() {
 	fmt.Println("Hello, World!")
+	sensor.ListenAndServe(8080)
 }
