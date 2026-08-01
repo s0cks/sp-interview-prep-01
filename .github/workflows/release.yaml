@@ -39,6 +39,8 @@ jobs:
           cache: true
       - name: Install Dependencies
         run: go mod download
+      - name: Run tests
+        run: go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
       - name: Build Sensor Service (linux/amd64)
         run: GOOS=linux GOARCH=amd64 go build -ldflags="-X main.Version=${{ needs.release-please.outputs.go_tag }} -s -w" -o bin/${{ matrix.cmd }}-linux-amd64 ./cmd/${{ matrix.cmd }}
       - name: Build Sensor Service (darwin/amd64)
