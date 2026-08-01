@@ -1,0 +1,90 @@
+openapi: 3.0.0
+info:
+  title: Sensors API
+  description: A minimal OpenAPI document for the managing sensor data
+  version: 0.1.0
+servers:
+  - url: http://localhost:8080
+    description: Local
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          example: "This is an error message"
+          type: string
+    SensorData:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            type: number
+          example: [1297, 1272, 192, 0]
+    SensorMetric:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: number
+          example: 12902.0
+paths:
+  /sensors/{id}:
+    post:
+      summary: Ingest a value from the sensor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the sensor
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Success"
+    get:
+      summary: Get the values for the sensor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the sensor
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Success"
+  /sensors/{id}/{metric}:
+    get:
+      summary: Get a metric for the sensor
+      responses:
+        "200":
+          description: The data was found
+        "404":
+          description: No sensor was found
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the sensor
+          schema:
+            type: string
+        - name: metric
+          in: path
+          required: true
+          description: The metric to get
+          schema:
+            type: string
+          examples:
+            average:
+              summary: Get the average of the sensor data
+              value: "avg"
+            sum:
+              summary: Get the sum of the sensor data
+              value: "sum"
