@@ -6,14 +6,26 @@ tasks:
     internal: false
     cmds:
       - go build -o "{{.BIN_DIR}}/{{.GO_TARGET}}" ./cmd/{{.GO_TARGET}}
+  go:test:
+    internal: false
+    cmds:
+      - go test "./internal/{{.GO_TARGET}}"
   build:service:
     cmds:
       - task: go:build-cmd
         vars:
           GO_TARGET: sensor-service
+  test:service:
+    cmds:
+      - task: go:test
+        vars:
+          GO_TARGET: sensor
   build:
     deps:
       - build:service
+  test:
+    deps:
+      - test:service
   default:
     cmds:
       - task: build
