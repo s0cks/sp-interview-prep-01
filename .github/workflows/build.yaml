@@ -78,8 +78,8 @@ jobs:
           file: ${{ matrix.dockerfile }}
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}-${{ metrix.service }}:latest
-            ghcr.io/${{ github.repository }}-${{ metrix.service }}:${{ steps.release.outputs.major }}
-            ghcr.io/${{ github.repository }}-${{ metrix.service }}:${{ steps.release.outputs.docker_version }}
+            ghcr.io/${{ github.repository }}-${{ matrix.service }}:latest
+            ghcr.io/${{ github.repository }}-${{ matrix.service }}:${{ steps.release.outputs.major }}
+            ghcr.io/${{ github.repository }}-${{ matrix.service }}:${{ steps.release.outputs.docker_version }}
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,mode=max,scope=${{ matrix.service }}
