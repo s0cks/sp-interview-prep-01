@@ -2,9 +2,11 @@ package sensor
 
 import (
 	"errors"
+	"sync"
 )
 
 type SensorBuffer struct {
+	lock     sync.RWMutex
 	data     []float64
 	head     int
 	tail     int
@@ -20,6 +22,9 @@ func NewSensorBuffer(capacity int) *SensorBuffer {
 }
 
 func (sb *SensorBuffer) Write(val float64) {
+	sb.lock.Lock()
+	defer sb.lock.Unlock()
+
 	if sb.length == sb.capacity {
 		sb.data[sb.head] = 0
 		sb.head = (sb.head + 1) % sb.capacity
@@ -32,6 +37,9 @@ func (sb *SensorBuffer) Write(val float64) {
 }
 
 func (sb *SensorBuffer) Read() (float64, error) {
+	sb.lock.RLock()
+	defer sb.lock.RUnlock()
+
 	if sb.length == 0 {
 		return 0, errors.New("buffer is empty")
 	}
