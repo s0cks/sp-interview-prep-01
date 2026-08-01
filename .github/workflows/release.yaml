@@ -22,9 +22,9 @@ jobs:
       - uses: googleapis/release-please-action@v4
         id: release
   release-go-artifacts:
-    needs: release-please
     name: Build go artifacts
-    if: ${{ needs.release-please.outputs.releases_created }} == 'true' && needs.release-please.outputs.go_tag != '' }}
+    needs: release-please
+    if: ${{ needs.release-please.outputs.releases_created == 'true' && needs.release-please.outputs.go_tag != '' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
