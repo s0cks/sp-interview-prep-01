@@ -18,9 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
-      go_tag: ${{ steps.release.outputs['._tag_name'] }}
-      docker_tag: ${{ steps.release.outputs['._tag_name'] }}
-      docker_version: ${{ steps.release.outputs['._version'] }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
@@ -45,13 +44,13 @@ jobs:
       - name: Run tests
         run: go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
       - name: Build Sensor Service (linux/amd64)
-        run: GOOS=linux GOARCH=amd64 go build -ldflags="-X main.Version=${{ needs.release-please.outputs.go_tag }} -s -w" -o bin/${{ matrix.cmd }}-linux-amd64 ./cmd/${{ matrix.cmd }}
+        run: GOOS=linux GOARCH=amd64 go build -ldflags="-X main.Version=${{ needs.release-please.outputs.version }} -s -w" -o bin/${{ matrix.cmd }}-linux-amd64 ./cmd/${{ matrix.cmd }}
       - name: Build Sensor Service (darwin/amd64)
-        run: GOOS=darwin GOARCH=amd64 go build -ldflags="-X main.Version=${{ needs.release-please.outputs.go_tag }} -s -w" -o bin/${{ matrix.cmd }}-darwin-amd64 ./cmd/${{ matrix.cmd }}
+        run: GOOS=darwin GOARCH=amd64 go build -ldflags="-X main.Version=${{ needs.release-please.outputs.version }} -s -w" -o bin/${{ matrix.cmd }}-darwin-amd64 ./cmd/${{ matrix.cmd }}
       - name: Upload Artifacts to Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ needs.release-please.outputs.go_tag }}
+          tag_name: ${{ needs.release-please.outputs.version }}
           files: bin/*
   release-docker-images:
     name: Release docker images
@@ -70,17 +69,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: login to ghcr
-        if: ${{ steps.release.outputs.release_created }}
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up Docker Buildx
-        if: ${{ steps.release.outputs.release_created }}
         uses: docker/setup-buildx-action@v3
       - name: Build and Push Docker Image
-        if: ${{ steps.release.outputs.release_created }}
         uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.context }}
@@ -89,6 +85,6 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}-${{ matrix.service }}:latest
             ghcr.io/${{ github.repository }}-${{ matrix.service }}:${{ steps.release.outputs.major }}
-            ghcr.io/${{ github.repository }}-${{ matrix.service }}:${{ steps.release.outputs.docker_version }}
+            ghcr.io/${{ github.repository }}-${{ matrix.service }}:${{ steps.release.outputs.version }}
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,mode=max,scope=${{ matrix.service }}
