@@ -20,7 +20,7 @@ type Response struct {
 	Data any `json:"data"`
 }
 
-func append(ctx context.Context, sid string, item float64) {
+func WriteData(ctx context.Context, sid string, item float64) {
 	actual, _ := buffers.LoadOrStore(sid, NewSensorBuffer(10))
 	sb, ok := actual.(*SensorBuffer)
 	if !ok {
@@ -88,7 +88,7 @@ func HandlePostData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go append(context.Background(), sid, req.Data)
+	go WriteData(context.Background(), sid, req.Data)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
@@ -129,6 +129,10 @@ type ErrorResponse struct {
 
 type MessageResponse struct {
 	Message string `json:"message"`
+}
+
+type StatusResponse struct {
+	Status string `json:"status"`
 }
 
 func HandleGetMetricData(w http.ResponseWriter, r *http.Request) {
@@ -191,6 +195,17 @@ func HandleGetMetricData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func HandleHealth(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	res := StatusResponse{
+		Status: "OK",
+	}
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+		http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		return
+	}
+}
+
 func ListenAndServe(port int) {
 	fmt.Printf("service is listening on http://localhost:%d\n", port)
 	router := http.NewServeMux()
@@ -198,6 +213,7 @@ func ListenAndServe(port int) {
 	router.HandleFunc("POST /sensors/{id}", HandlePostData)
 	router.HandleFunc("GET /sensors/{id}", HandleGetAllData)
 	router.HandleFunc("GET /sensors/{id}/{metric}", HandleGetMetricData)
+	router.HandleFunc("GET /health", HandleHealth)
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), router); err != nil {
 		fmt.Printf("failed to start service: %v\n", err)
