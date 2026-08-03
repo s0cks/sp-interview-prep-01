@@ -45,22 +45,21 @@ Scope it to a few hours, not a full system — the goal is muscle memory on the 
 
 ## Architecture
 
-See [ARCHITECTURE](/docs/Architecture.md).
+> You can find some architectural docs here:
+
+See [Architecture](/docs/Architecture.md).
 
 ## Building
 
-```sh
-go build
-```
+> You can find how to build the various components here:
+
+See [Building](/docs/Building.md).
 
 ## Timeline
 
-> A documented timeline of working sessions
+> You can find a timeline of working sessions here:
 
-|                   Start | End                     |                                                                                                                                                                                                                                                                                           Issue                                                                                                                                                                                                                                                                                          | Description                                                                                                                               |
-|------------------------:|:------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------|
-|   Sat, Aug 1st 2026 12p | Sat, Aug 1st 2026 2:15p |                                                                                                                                                                                                                                                               [#1](https://github.com/s0cks/sp-interview-prep-01/issues/1)                                                                                                                                                                                                                                                               | First Session.<br/>Working on:<br/><ul><li>initial project structure</li><li>architectural documents</li><li>and initial issues</li></ul> |
-| Sat, Aug 1st 2026 3:00p | Sat, Aug 1st 2026 8:00p | [#2](https://github.com/s0cks/sp-interview-prep-01/issues/2), [#4](https://github.com/s0cks/sp-interview-prep-01/issues/4), [#5](https://github.com/s0cks/sp-interview-prep-01/issues/5), [#13](https://github.com/s0cks/sp-interview-prep-01/issues/13), [#12](https://github.com/s0cks/sp-interview-prep-01/issues/12), [#18](https://github.com/s0cks/sp-interview-prep-01/issues/18), [#15](https://github.com/s0cks/sp-interview-prep-01/issues/15), [#16](https://github.com/s0cks/sp-interview-prep-01/issues/16), [#17](https://github.com/s0cks/sp-interview-prep-01/issues/17) | Second Session.<br/>Working on:<br/><ul><li>REST api endpoints</li><li>Docker file</li><li>CI/CD actions</li></ul>                        |
+See [Timeline](/docs/Timeline.md).
 
 ## LICENSE
 
