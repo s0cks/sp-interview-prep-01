@@ -206,6 +206,17 @@ func HandleHealth(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func HandleReady(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	res := StatusResponse{
+		Status: "OK",
+	}
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+		http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		return
+	}
+}
+
 func ListenAndServe(port int) {
 	fmt.Printf("service is listening on http://localhost:%d\n", port)
 	router := http.NewServeMux()
@@ -214,6 +225,7 @@ func ListenAndServe(port int) {
 	router.HandleFunc("GET /sensors/{id}", HandleGetAllData)
 	router.HandleFunc("GET /sensors/{id}/{metric}", HandleGetMetricData)
 	router.HandleFunc("GET /health", HandleHealth)
+	router.HandleFunc("GET /ready", HandleReady)
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), router); err != nil {
 		fmt.Printf("failed to start service: %v\n", err)
