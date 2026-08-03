@@ -19,6 +19,13 @@ tasks:
       - task: go:build-cmd
         vars:
           GO_TARGET: sensor-service
+  build:mock-sensor-image:
+    cmds:
+      - |
+        docker buildx build \
+          -f test/sensor-mock/Dockerfile \
+          test/sensor-mock/ \
+          -t ghcr.io/s0cks/sp-interview-prep-01-sensor-mock:latest
   test:service:
     cmds:
       - task: go:test
