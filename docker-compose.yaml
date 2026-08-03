@@ -1,6 +1,29 @@
 version: '3.8'
 services:
-  sensor-web:
+  service:
+    build:
+      context: .
+      dockerfile: cmd/sensor-service/Dockerfile
+    image: s0cks/sp-interview-prep-01-sensor-service:latest
+    networks:
+      - sensor
+  mock:
+    build:
+      context: test/sensor-mock/
+      dockerfile: Dockerfile
+    image: s0cks/sp-interview-prep-01-sensor-mock:latest
+    depends_on:
+      service:
+        condition: service_healthy
+    networks:
+      - sensor
+    environment:
+      - SENSOR_SERVICE_HOST=http://service:8080
+      - SENSOR_ID=sensor-01
+      - SENSOR_PATTERN=steady
+      - SENSOR_INTERVALS=25
+      - SENSOR_DELAY=2.0
+  web:
     build:
       context: client/
       dockerfile: Dockerfile
@@ -9,15 +32,11 @@ services:
     image: s0cks/sp-interview-prep-01-sensor-web:latest
     ports:
       - "8080:80"
-  sensor-service:
-    build:
-      context: .
-      dockerfile: cmd/sensor-service/Dockerfile
-    image: s0cks/sp-interview-prep-01-sensor-service:latest
-    ports:
-      - "8081:80"
-  sensor-mock:
-    build:
-      context: test/sensor-mock/
-      dockerfile: Dockerfile
-    image: s0cks/sp-interview-prep-01-sensor-mock:latest
+    depends_on:
+      service:
+        condition: service_healthy
+    networks:
+      - sensor
+networks:
+  sensor:
+    driver: bridge

@@ -1,0 +1,21 @@
+{{- if .Values.web.service.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "sensors.web.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.web.service.type | default "ClusterIP" }}
+  selector:
+    {{- include "sensors.web.selectorLabels" . | nindent 6 }}
+  ports:
+  {{- range $name, $port := .Values.web.service.port }}
+  {{- if $port.enabled }}
+    - name: {{ $name }}
+      port: {{ $port.port }}
+  {{- end }}
+  {{- end }}
+{{- end }}

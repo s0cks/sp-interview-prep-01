@@ -1,0 +1,35 @@
+{{- if .Values.api.deployment.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-api
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "sensors.api.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.api.deployment.replicas | default 1 }}
+  strategy:
+    type: "Recreate"
+  selector:
+    matchLabels:
+      {{- include "sensors.api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "sensors.api.labels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-api
+        image: {{ include "sensors.api.imageFullName" . | quote }}
+        {{- if .Values.api.image }}
+        imagePullPolicy: {{ .Values.api.image.pullPolicy | default "IfNotPresent" }}
+        {{- end }}
+        ports:
+        {{- range $name, $port := .Values.api.service.ports }}
+        {{- if $port.enabled }}
+          - name: {{ $name }}
+            containerPort: {{ $port.containerPort | default $port.port }}
+        {{- end }}
+        {{- end }}
+{{- end }}

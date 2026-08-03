@@ -1,0 +1,29 @@
+{{- if .Values.mockSensor.enabled }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "sensors.mockSensor.labels" . | nindent 4 }}
+spec:
+  completions: {{ .Values.mockSensor.completions | default 1 }}
+  parallelism: {{ .Values.mockSensor.parallelism | default 1 }}
+  completionMode: Indexed 
+  backoffLimit: {{ .Values.mockSensor.backoffLimit | default 4 }}
+  template:
+    metadata:
+      name: mockSensor-job
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-mock-sensor
+          image: {{ include "sensors.mockSensor.imageFullName" . | quote }}
+      env:
+        - name: SENSOR_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.annotations['batch.kubernetes.io/job-completion-index']
+      restartPolicy: {{ .Values.mockSensor.restartPolicy | default "Never" }}
+{{- end }}
+
