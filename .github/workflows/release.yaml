@@ -32,6 +32,11 @@ jobs:
       matrix:
         include:
           - cmd: sensor-service
+            os: linux
+            arch: amd64
+          - cmd: sensor-service
+            os: darwin
+            arch: amd64
     steps:
       - uses: actions/checkout@v4
       - name: Set up go
@@ -43,10 +48,8 @@ jobs:
         run: go mod download
       - name: Run tests
         run: go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
-      - name: Build Sensor Service (linux/amd64)
-        run: GOOS=linux GOARCH=amd64 go build -ldflags="-X main.Version=${{ needs.release-please.outputs.version }} -s -w" -o bin/${{ matrix.cmd }}-linux-amd64 ./cmd/${{ matrix.cmd }}
-      - name: Build Sensor Service (darwin/amd64)
-        run: GOOS=darwin GOARCH=amd64 go build -ldflags="-X main.Version=${{ needs.release-please.outputs.version }} -s -w" -o bin/${{ matrix.cmd }}-darwin-amd64 ./cmd/${{ matrix.cmd }}
+      - name: Build ${{ matrix.service }} (${{matrix.os }}/${{ matrix.arch }})
+        run: GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -ldflags="-X main.Version=${{ needs.release-please.outputs.version }} -s -w" -o bin/${{ matrix.cmd }}-${{ matrix.os }}-${{ matrix.arch }} ./cmd/${{ matrix.cmd }}
       - name: Upload Artifacts to Release
         uses: softprops/action-gh-release@v2
         with:
@@ -64,8 +67,11 @@ jobs:
             context: .
             dockerfile: ./cmd/sensor-service/Dockerfile
           - service: sensor-mock
-            context: .
+            context: test/sensor-mock/
             dockerfile: ./test/sensor-mock/Dockerfile
+          - service: sensor-web
+            context: client/
+            dockerfile: ./client/Dockerfile
     steps:
       - uses: actions/checkout@v4
       - name: login to ghcr

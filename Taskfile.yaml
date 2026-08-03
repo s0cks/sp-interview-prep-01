@@ -19,6 +19,9 @@ tasks:
       - task: go:build-cmd
         vars:
           GO_TARGET: sensor-service
+  build:images:
+    cmds:
+      - docker compose build
   test:service:
     cmds:
       - task: go:test
@@ -32,6 +35,7 @@ tasks:
   build:
     deps:
       - build:service
+      - build:images
   test:
     deps:
       - test:service

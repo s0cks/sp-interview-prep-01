@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  sensor-web:
+    build:
+      context: client/
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: production
+    image: s0cks/sp-interview-prep-01-sensor-web:latest
+    ports:
+      - "8080:80"
+  sensor-service:
+    build:
+      context: .
+      dockerfile: cmd/sensor-service/Dockerfile
+    image: s0cks/sp-interview-prep-01-sensor-service:latest
+    ports:
+      - "8081:80"
+  sensor-mock:
+    build:
+      context: test/sensor-mock/
+      dockerfile: Dockerfile
+    image: s0cks/sp-interview-prep-01-sensor-mock:latest
