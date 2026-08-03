@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/s0cks/sp-interview-prep-01/compare/1.1.0...v1.1.1) (2026-08-03)
+
+
+### Bug Fixes
+
+* **release-please:** 🐛 lets try fixing the release-please docker step ([7ead643](https://github.com/s0cks/sp-interview-prep-01/commit/7ead643e9e6492251570aafb2cb037bf8c59efca))
+
 ## [1.1.0](https://github.com/s0cks/sp-interview-prep-01/compare/v1.0.0...v1.1.0) (2026-08-03)
 
 
