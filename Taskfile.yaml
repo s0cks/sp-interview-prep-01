@@ -19,27 +19,9 @@ tasks:
       - task: go:build-cmd
         vars:
           GO_TARGET: sensor-service
-  build:service-image:
+  build:images:
     cmds:
-      - |
-        docker buildx build \
-          -f cmd/sensor-service/Dockerfile \
-          . \
-          -t ghcr.io/s0cks/sp-interview-prep-01-sensor-service:latest
-  build:mock-sensor-image:
-    cmds:
-      - |
-        docker buildx build \
-          -f test/sensor-mock/Dockerfile \
-          test/sensor-mock/ \
-          -t ghcr.io/s0cks/sp-interview-prep-01-sensor-mock:latest
-  build:web-image:
-    cmds:
-      - |
-        docker buildx build \
-          -f client/Dockerfile \
-          client/ \
-          -t ghcr.io/s0cks/sp-interview-prep-01-sensor-web:latest
+      - docker compose build
   test:service:
     cmds:
       - task: go:test
@@ -53,9 +35,7 @@ tasks:
   build:
     deps:
       - build:service
-      - build:service-image
-      - build:mock-sensor-image
-      - build:web-image
+      - build:images
   test:
     deps:
       - test:service
