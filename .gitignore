@@ -1,3 +1,2 @@
 .rumdl_cache/
-bin/*
-!bin/.git*
+bin/
