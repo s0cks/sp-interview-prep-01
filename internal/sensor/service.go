@@ -246,10 +246,36 @@ func HandleReady(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func HandleGetSensors(w http.ResponseWriter, r *http.Request) {
+	var sensors []string
+	buffers.Range(func(key, v any) bool {
+		if k, ok := key.(string); ok {
+			sensors = append(sensors, k)
+		}
+
+		return true
+	})
+
+	if len(sensors) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	res := Response{
+		Data: sensors,
+	}
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+		http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		return
+	}
+}
+
 func ListenAndServe(port int) {
 	fmt.Printf("service is listening on http://localhost:%d\n", port)
 	router := http.NewServeMux()
 
+	router.HandleFunc("GET /sensors", HandleGetSensors)
 	router.HandleFunc("POST /sensors/{id}", HandlePostData)
 	router.HandleFunc("GET /sensors/{id}", HandleGetAllData)
 	router.HandleFunc("GET /sensors/{id}/{metric}", HandleGetMetricData)

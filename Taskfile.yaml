@@ -32,6 +32,45 @@ tasks:
       - task: go:run-cmd
         vars:
           GO_TARGET: sensor-service
+  # requires [ouch](https://github.com/ouch-org/ouch)
+  ouch:compress:
+    internal: true
+    vars:
+      ROOT_DIR_NAME:
+        sh: basename "{{.ROOT_DIR}}"
+    cmds:
+      - |
+        ouch compress \
+          .github \
+          client/ \
+          cmd/ \
+          docs/ \
+          internal/ \
+          test/ \
+          CHANGELOG.md \
+          docker-compose.yaml \
+          .dockerignore \
+          .gitignore \
+          .release-please-manifest.json \
+          .yamllint \
+          go.mod \
+          go.sum \
+          LICENSE \
+          openapi.yaml \
+          README.md \
+          release-please-config.json \
+          Taskfile.yaml \
+          {{.ROOT_DIR_NAME}}-sources.{{.OUCH_COMPRESSION}}
+  zip:
+    cmds:
+      - task: ouch:compress
+        vars:
+          OUCH_COMPRESSION: zip
+  targz:
+    cmds:
+      - task: ouch:compress
+        vars:
+          OUCH_COMPRESSION: tar.gz
   build:
     deps:
       - build:service
@@ -39,6 +78,27 @@ tasks:
   test:
     deps:
       - test:service
+  clean:cleanrf:
+    internal: true
+    cmds:
+      - rm -rf {{.CLEAN_TARGETS}}
+  clean:bin:
+    cmds:
+      - task: clean:cleanrf
+        vars:
+          CLEAN_TARGETS: bin/*
+  clean:source-archive:
+    vars:
+      ROOT_DIR_NAME:
+        sh: basename "{{.ROOT_DIR}}"
+    cmds:
+      - task: clean:cleanrf
+        vars:
+          CLEAN_TARGETS: "{{.ROOT_DIR_NAME}}-sources.*"
+  clean:
+    deps:
+      - clean:bin
+      - clean:source-archive
   default:
     cmds:
       - task: build
