@@ -51,9 +51,11 @@ See [Architecture](/docs/Architecture.md).
 
 ## Building
 
-> You can find how to build the various components here:
+You can find how to build the components in their own folders:
 
-See [Building](/docs/Building.md).
+- [sensor-service](/cmd/sensor-service/)
+- [dashboard](/client/)
+- [mock-sensor](/test/sensor-mock/)
 
 ## Building All the Docker Images
 
