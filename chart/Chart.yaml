@@ -1,0 +1,10 @@
+apiVersion: v2
+name: sensors
+version: 1.0.0
+appVersion: latest
+maintainers:
+  - name: s0cks
+    email: tasman.vose@gmail.com
+    url: https://github.com/s0cks/sp-interview-prep-01
+sources:
+  - https://github.com/s0cks/sp-interview-prep-01

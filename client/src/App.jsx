@@ -7,7 +7,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const sensor = 'sensor-0';
+  const sensor = 'sensor-01';
 
   return (
     <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'middle', justifyContent: 'center', adding: '20px', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto' }}>
@@ -25,7 +25,7 @@ function App() {
       </div>
 
       <SensorChart
-        endpointUrl={`/sensors/${sensor}`}
+        endpointUrl={`/api/sensors/${sensor}`}
         title={sensor}/>  
     </div>
   );

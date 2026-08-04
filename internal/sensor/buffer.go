@@ -42,8 +42,8 @@ func (sb *SensorBuffer) Write(val float64) {
 }
 
 func (sb *SensorBuffer) Read() (float64, error) {
-	sb.lock.RLock()
-	defer sb.lock.RUnlock()
+	sb.lock.Lock()
+	defer sb.lock.Unlock()
 
 	if sb.length == 0 {
 		return 0, errors.New("buffer is empty")
@@ -65,12 +65,33 @@ func (sb *SensorBuffer) CalcMetrics() (*SensorBufferMetrics, error) {
 	}
 
 	sum := float64(0.0)
-	for _, val := range sb.data {
-		sum += val
+	curr := sb.head
+	for i := 0; i < sb.length; i++ {
+		sum += sb.data[curr]
+		curr = (curr + 1) % sb.capacity
 	}
 
 	return &SensorBufferMetrics{
 		sum: sum,
 		avg: sum / float64(sb.length),
 	}, nil
+}
+
+func (sb *SensorBuffer) ReadAll() []float64 {
+	sb.lock.RLock()
+	defer sb.lock.RUnlock()
+
+	if sb.length == 0 {
+		return []float64{}
+	}
+
+	result := make([]float64, sb.length)
+	curr := sb.head
+
+	for i := 0; i < sb.length; i++ {
+		result[i] = sb.data[curr]
+		curr = (curr + 1) % sb.capacity
+	}
+
+	return result
 }

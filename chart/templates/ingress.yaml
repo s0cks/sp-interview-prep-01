@@ -1,0 +1,36 @@
+{{- if .Values.ingress.enabled }}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "sensors.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+  {{- range $entry := .Values.ingress.entryPoints }}
+    - {{ $entry }}
+  {{- end }}
+  {{- if .Values.ingress.tls.enabled }}
+    {{- if .Values.ingress.tls.certResolver }}
+      certResolver: {{ .Values.ingress.tls.certResolver }}
+    {{- else }}
+      secretName: {{ .Release.Name }}-cert
+    {{- end }}
+  {{- end }}
+  routes:
+  - match: HostRegexp(`{{ .Release.Name }}{subdomain:(\..+)?}.{{ .Values.ingress.domain | default "localhost" }}`)
+    kind: Rule
+    services:
+      {{- range $name, $port := .Values.service.ports }}
+      {{- if $port.enabled }}
+      {{- if $port.expose }}
+      - name: {{ $.Release.Name }}
+        namespace: {{ $.Release.Namespace }}
+        kind: Service
+        port: {{ $port.port }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+{{- end }}

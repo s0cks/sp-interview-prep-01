@@ -1,0 +1,41 @@
+api:
+  service:
+    enabled: true
+    ports:
+      http:
+        enabled: true
+        expose: true
+        port: 8080
+      https:
+        enabled: false
+        expose: false
+  # image:
+  #   pullPolicy: IfNotPresent
+  #   registry: ghcr.io/s0cks
+  #   name: sp-interview-prep-01
+  #   version: latest
+  deployment:
+    enabled: true
+    replicas: 1
+web:
+  service:
+    enabled: true
+    ports:
+      http:
+        enabled: true
+        expose: true
+        port: 80
+      https:
+        enabled: false
+        expose: false
+  deployment:
+    enabled: true
+    replicas: 1
+mockSensor:
+  enabled: true
+  parallelism: 1
+  completions: 1
+  backoffLimit: 5
+  restartPolicy: Never
+ingress:
+  enable: false

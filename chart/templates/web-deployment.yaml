@@ -1,0 +1,35 @@
+{{- if .Values.web.deployment.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-web
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "sensors.web.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.web.deployment.replicas | default 1 }}
+  strategy:
+    type: "Recreate"
+  selector:
+    matchLabels:
+      {{- include "sensors.web.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "sensors.web.labels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-web
+        image: {{ include "sensors.web.imageFullName" . | quote }}
+        {{- if .Values.web.image }}
+        imagePullPolicy: {{ .Values.web.image.pullPolicy | default "IfNotPresent" }}
+        {{- end }}
+        ports:
+        {{- range $name, $port := .Values.web.service.ports }}
+        {{- if $port.enabled }}
+          - name: {{ $name }}
+            containerPort: {{ $port.containerPort | default $port.port }}
+        {{- end }}
+        {{- end }}
+{{- end }}

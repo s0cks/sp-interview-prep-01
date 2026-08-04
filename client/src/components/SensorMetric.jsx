@@ -5,7 +5,7 @@ export default function SensorChart({ sensor, metric }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const endpointUrl = `/sensors/${sensor}/${metric}`;
+  const endpointUrl = `/api/sensors/${sensor}/${metric}`;
   useEffect(() => {
     fetch(endpointUrl)
       .then((res) => {

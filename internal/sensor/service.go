@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"strconv"
 	"sync"
 )
 
@@ -20,8 +22,38 @@ type Response struct {
 	Data any `json:"data"`
 }
 
-func append(ctx context.Context, sid string, item float64) {
-	actual, _ := buffers.LoadOrStore(sid, NewSensorBuffer(10))
+type ErrorResponse struct {
+	Error error
+}
+
+type MessageResponse struct {
+	Message string `json:"message"`
+}
+
+type StatusResponse struct {
+	Status string `json:"status"`
+}
+
+func CreateNewSensorBuffer() *SensorBuffer {
+	total_samples := 10
+
+	num_sensors, exists := os.LookupEnv("MAX_NUMBER_OF_SAMPLES")
+	if exists {
+		num, err := strconv.Atoi(num_sensors)
+		if err != nil {
+			fmt.Println("conversion error:", err)
+			os.Exit(1)
+			return nil
+		}
+
+		total_samples = num
+	}
+
+	return NewSensorBuffer(total_samples)
+}
+
+func WriteData(ctx context.Context, sid string, item float64) {
+	actual, _ := buffers.LoadOrStore(sid, CreateNewSensorBuffer())
 	sb, ok := actual.(*SensorBuffer)
 	if !ok {
 		return
@@ -31,8 +63,13 @@ func append(ctx context.Context, sid string, item float64) {
 	fmt.Printf("wrote %f for %v\n", item, sid)
 }
 
-func getAll(ctx context.Context, sid string, resultsCh chan []float64) {
-	actual, _ := buffers.LoadOrStore(sid, NewSensorBuffer(10))
+func GetAll(ctx context.Context, sid string, resultsCh chan []float64) {
+	actual, _ := buffers.Load(sid)
+	if actual == nil {
+		resultsCh <- nil
+		return
+	}
+
 	sb, ok := actual.(*SensorBuffer)
 	if !ok {
 		return
@@ -46,12 +83,16 @@ func getAll(ctx context.Context, sid string, resultsCh chan []float64) {
 		return
 	}
 
-	var results []float64 = sb.data[0:sb.length]
-	resultsCh <- results
+	resultsCh <- sb.ReadAll()
 }
 
-func getMetric(ctx context.Context, sid string, metric string, resultsCh chan any) {
-	actual, _ := buffers.LoadOrStore(sid, NewSensorBuffer(10))
+func GetMetric(ctx context.Context, sid string, metric string, resultsCh chan any) {
+	actual, _ := buffers.Load(sid)
+	if actual == nil {
+		resultsCh <- nil
+		return
+	}
+
 	sb, ok := actual.(*SensorBuffer)
 	if !ok {
 		resultsCh <- fmt.Errorf("invalid buffer type")
@@ -88,7 +129,7 @@ func HandlePostData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go append(context.Background(), sid, req.Data)
+	go WriteData(context.Background(), sid, req.Data)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
@@ -99,7 +140,7 @@ func HandleGetAllData(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	resultCh := make(chan []float64, 1)
 
-	go getAll(ctx, sid, resultCh)
+	go GetAll(ctx, sid, resultCh)
 
 	w.Header().Set("Content-Type", "application/json")
 	var res Response
@@ -123,26 +164,18 @@ func HandleGetAllData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type ErrorResponse struct {
-	Error error
-}
-
-type MessageResponse struct {
-	Message string `json:"message"`
-}
-
 func HandleGetMetricData(w http.ResponseWriter, r *http.Request) {
 	sid := r.PathValue("id")
 	metric := r.PathValue("metric")
 	ctx := r.Context()
-	resultCh := make(chan any)
+	resultCh := make(chan any, 1)
 
 	fmt.Printf("getting %s metric for sensor %s\n", metric, sid)
 
 	w.Header().Set("Content-Type", "application/json")
 	switch metric {
 	case "avg", "sum":
-		go getMetric(ctx, sid, metric, resultCh)
+		go GetMetric(ctx, sid, metric, resultCh)
 	default:
 		w.WriteHeader(http.StatusBadRequest)
 		var payload MessageResponse = MessageResponse{
@@ -191,6 +224,28 @@ func HandleGetMetricData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func HandleHealth(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	res := StatusResponse{
+		Status: "OK",
+	}
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+		http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		return
+	}
+}
+
+func HandleReady(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	res := StatusResponse{
+		Status: "OK",
+	}
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+		http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		return
+	}
+}
+
 func ListenAndServe(port int) {
 	fmt.Printf("service is listening on http://localhost:%d\n", port)
 	router := http.NewServeMux()
@@ -198,6 +253,8 @@ func ListenAndServe(port int) {
 	router.HandleFunc("POST /sensors/{id}", HandlePostData)
 	router.HandleFunc("GET /sensors/{id}", HandleGetAllData)
 	router.HandleFunc("GET /sensors/{id}/{metric}", HandleGetMetricData)
+	router.HandleFunc("GET /health", HandleHealth)
+	router.HandleFunc("GET /ready", HandleReady)
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), router); err != nil {
 		fmt.Printf("failed to start service: %v\n", err)
