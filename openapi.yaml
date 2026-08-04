@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Sensors API
   description: A minimal OpenAPI document for the managing sensor data
-  version: 0.1.0
+  version: 1.0.0
 servers:
   - url: http://localhost:8080
     description: Local
@@ -35,6 +35,14 @@ components:
           type: number
           example: 12902.0
 paths:
+  /sensors:
+    get:
+      summary: Return a list of sensor ids
+      responses:
+        "200":
+          description: "A list of sensor ids"
+        "204":
+          description: "There are no registered sensors"
   /sensors/{id}:
     post:
       summary: Ingest a value from the sensor
@@ -46,8 +54,8 @@ paths:
           schema:
             type: string
       responses:
-        "200":
-          description: "Success"
+        "202":
+          description: "Service accepted data"
     get:
       summary: Get the values for the sensor
       parameters:
@@ -59,15 +67,12 @@ paths:
             type: string
       responses:
         "200":
-          description: "Success"
+          description: A list of values for the sensor
+        "204":
+          description: There are no values for the sensor or the sensor doesn't exist
   /sensors/{id}/{metric}:
     get:
       summary: Get a metric for the sensor
-      responses:
-        "200":
-          description: The data was found
-        "404":
-          description: No sensor was found
       parameters:
         - name: id
           in: path
@@ -78,7 +83,7 @@ paths:
         - name: metric
           in: path
           required: true
-          description: The metric to get
+          description: The metric to use in calculations
           schema:
             type: string
           examples:
@@ -88,3 +93,8 @@ paths:
             sum:
               summary: Get the sum of the sensor data
               value: "sum"
+      responses:
+        "200":
+          description: The result of the metric calculation for the sensor values
+        "204":
+          description: There are no values for the sensor or the sensor doesn't exist

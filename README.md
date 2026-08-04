@@ -92,10 +92,18 @@ See: [docker-compose.yaml](/docker-compose.yaml)
 
 See [Timeline](/docs/Timeline.md).
 
+## FAQ
+
+I created a [FAQ](/docs/FAQ.md) to answer some questions like:
+
+- What would I do differently/next?
+- Lessons Learned
+- etc
+
 ## LICENSE
 
 See [LICENSE](/LICENSE)
 
 ## Credits
 
-- [Claude](https://claude.ai) --- For helping with practice, project idea and feedback.
+- [Claude](https://claude.ai) --- For helping with mock-interview practice, project idea and feedback.

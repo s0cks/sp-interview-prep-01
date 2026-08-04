@@ -90,7 +90,7 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository }}-${{ matrix.service }}:latest
-            ghcr.io/${{ github.repository }}-${{ matrix.service }}:${{ steps.release.outputs.major }}
-            ghcr.io/${{ github.repository }}-${{ matrix.service }}:${{ steps.release.outputs.version }}
+            ghcr.io/${{ github.repository }}-${{ matrix.service }}:${{ needs.release-please.outputs.version }}
+            ghcr.io/${{ github.repository }}-${{ matrix.service }}:${{ needs.release-please.outputs.version }}
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,mode=max,scope=${{ matrix.service }}
