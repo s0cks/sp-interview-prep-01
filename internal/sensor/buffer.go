@@ -19,6 +19,8 @@ type SensorBufferMetrics struct {
 	avg float64
 }
 
+const DefaultNumberOfSamples = 10
+
 func NewSensorBuffer(capacity int) *SensorBuffer {
 	return &SensorBuffer{
 		data:     make([]float64, capacity),
@@ -54,6 +56,18 @@ func (sb *SensorBuffer) Read() (float64, error) {
 	sb.head = (sb.head + 1) % sb.capacity
 	sb.length--
 	return next, nil
+}
+
+func (sb *SensorBuffer) GetLengthSafely() int {
+	sb.lock.RLock()
+	defer sb.lock.RUnlock()
+	return sb.length
+}
+
+func (sb *SensorBuffer) GetCapacitySafely() int {
+	sb.lock.RLock()
+	defer sb.lock.RUnlock()
+	return sb.capacity
 }
 
 func (sb *SensorBuffer) CalcMetrics() (*SensorBufferMetrics, error) {
