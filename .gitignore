@@ -1,3 +1,4 @@
 .rumdl_cache/
 .venv/
 bin/
+*.txt
