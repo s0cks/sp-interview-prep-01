@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.2.0](https://github.com/s0cks/sp-interview-prep-01/compare/1.1.1...v1.2.0) (2026-08-04)
+
+
+### Features
+
+* ✨ add basic helm chart ([242f80b](https://github.com/s0cks/sp-interview-prep-01/commit/242f80b9abac131b3eaaba8f5cc9c2baf26839ca)), closes [#10](https://github.com/s0cks/sp-interview-prep-01/issues/10)
+* **service:** ✨ add /health check endpoint ([89d9de9](https://github.com/s0cks/sp-interview-prep-01/commit/89d9de934df8dda6a694104ca078f7fc07bf1204))
+* **service:** ✨ add /health check endpoint ([3247667](https://github.com/s0cks/sp-interview-prep-01/commit/32476677beb531beb907c1dddc8ea952d09569b6))
+* **service:** ✨ add /ready endpoint ([96907f0](https://github.com/s0cks/sp-interview-prep-01/commit/96907f0d910c53bbd1cd7bf66c9571b803796e65))
+
+
+### Bug Fixes
+
+* **service:** 🐛 fix SensorBuffer implementation a little bit ([f7a3719](https://github.com/s0cks/sp-interview-prep-01/commit/f7a3719b48a46d4ace022e82684a42abb3eeb099))
+* **web,service,mock:** 🐛 fix a bunch of containerization issues ([e3fe3d4](https://github.com/s0cks/sp-interview-prep-01/commit/e3fe3d4e88207e7c46dd710f1e23588980174bd9))
+
 ## [1.1.1](https://github.com/s0cks/sp-interview-prep-01/compare/1.1.0...v1.1.1) (2026-08-03)
 
 
