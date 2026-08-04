@@ -19,12 +19,19 @@ What would I do differently if:
 - Make the `{id}` and `{metric}` path params a query string in `GET /sensors/{id}` or `GET /sensors/{id}/{metric}` like `GET /sensors?id={id}&metric=sum` for a more flexible api.
 - Cache the number of samples environment variable at boot in the [main.go](/cmd/sensor-service/main.go) for the [Go service](/internal/sensor/service.go) to use
 - Add unit tests for the controller code [service.go](/internal/sensor/service.go).
+- Add support for persistence (disk storage or redis)
+- Use log/slog instead of `fmt.Printf`
+- Version endpoint
+- Authentication
+- Horizontal scaling
+- Have better metrics endpoints, use some kind of strategy pattern for them.
 
 ### Web Dashboard
 
 - Better UX
 - Probably would have used typescript.
 - Add unit tests for [dashboard components](/client/src/components/).
+- Add live results using web-sockets
 
 ### Mock Sensor
 

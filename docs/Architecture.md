@@ -46,6 +46,8 @@ endpoints will work:
 
 > A sequence diagram for how the POST endpoint works
 
+Sensors can post data for the service to ingest here
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -65,6 +67,36 @@ sequenceDiagram
     Note over Buffer: rwlock.Unlock()
     Buffer->>Service: 
     Service->>Sensor: 200
+```
+
+#### GET /sensors
+
+> A Sequence diagram for how the GET sensor endpoint works
+
+Returns a list of sensor ids
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Client as Client
+    participant Service as Service
+    participant Registry as Sensor Buffer Registry
+    participant Buffer as Sensor Buffer
+
+    Client->>Service: GET /sensors
+    alt Buffer registry is empty
+        Registry->>Service: nil
+        Service->>Client: 204
+    else
+        Registry->>Service: buffer
+    end
+
+    Service->>Buffer:
+    Note over Buffer: rwlock.RLock()
+    Note over Buffer: read data as copy
+    Note over Buffer: rwlock.RUnlock()
+    Buffer->>Service: data
+    Service->>Client: 200
 ```
 
 #### GET /sensors/{id}
@@ -87,7 +119,7 @@ sequenceDiagram
     Note over Registry: sync.Map.Load()
     alt Buffer {id} not found
         Registry->>Service: nil
-        Service->>Client: 404
+        Service->>Client: 204
     else
         Registry->>Service: buffer
     end
@@ -111,6 +143,8 @@ It supports the following metrics:
 - average
 - sum
 
+We calculate the result on demand to improve ingestion time and provide flexibility and scaling for any future metrics.
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -121,14 +155,14 @@ sequenceDiagram
 
     Client->>Service: GET /sensors/{id}/{metric}
     alt Invalid metric
-        Service->>Client: 404 - Invalid Metric
+        Service->>Client: 400
     end
 
     Service->>Registry: Get buffer for {id}
     Note over Registry: sync.Map.Load()
     alt Buffer not found
         Registry->>Service: nil
-        Service->>Client: 404 - No data
+        Service->>Client: 204
     end
 
     Service->>Buffer:

@@ -55,6 +55,37 @@ See [Architecture](/docs/Architecture.md).
 
 See [Building](/docs/Building.md).
 
+## Building All the Docker Images
+
+### Prerequisites
+
+- [task](https://taskfile.dev) -- v3.51.1+ `Optional, useful for building`
+- [docker-compose](https://docs.docker.com/compose/) -- v5.1.4+
+
+---
+
+Using **docker-compose**:
+
+```sh
+docker compose build
+```
+
+Using **task**:
+
+```sh
+task build:images
+```
+
+---
+
+This builds images for the following:
+
+- The [service](https://github.com/s0cks/sp-interview-prep-01/pkgs/container/sp-interview-prep-01-sensor-service) image.
+- The [web](https://github.com/s0cks/sp-interview-prep-01/pkgs/container/sp-interview-prep-01-sensor-web) image.
+- The [mock-sensor](https://github.com/s0cks/sp-interview-prep-01/pkgs/container/sp-interview-prep-01-sensor-mock) image.
+
+See: [docker-compose.yaml](/docker-compose.yaml)
+
 ## Timeline
 
 > You can find a timeline of working sessions here:
