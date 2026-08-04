@@ -32,6 +32,13 @@ What would I do differently if:
 - Probably would have used typescript.
 - Add unit tests for [dashboard components](/client/src/components/).
 - Add live results using web-sockets
+- Add metrics and visualizations for comparative analysis of all the sensors
+
+  - Capture min/max of sensor data
+  - Capture global avg
+  - Capture global min/max
+  - Top-N sensors based on avg and sum
+  - etc
 
 ### Mock Sensor
 
